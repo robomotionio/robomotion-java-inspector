@@ -19,12 +19,12 @@ using WindowsAccessBridgeInterop;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Access Bridge Explorer")]
+[assembly: AssemblyTitle("Robomotion Java Inspector")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Access Bridge Explorer")]
-[assembly: AssemblyCopyright("Copyright 2016 Google Inc. All Rights Reserved.")]
+[assembly: AssemblyProduct("Robomotion Java Inspector")]
+[assembly: AssemblyCopyright("Copyright 2024 Robomotion. Copyright 2016 Google Inc. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

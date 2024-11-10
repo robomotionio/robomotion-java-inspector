@@ -1035,7 +1035,7 @@ namespace AccessBridgeExplorer {
       this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
       this.MinimumSize = new System.Drawing.Size(600, 400);
       this.Name = "ExplorerForm";
-      this.Text = "Access Bridge Explorer";
+      this.Text = "Robomotion Java Inspector";
       this.Activated += new System.EventHandler(this.MainForm_Activated);
       this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);

@@ -135,7 +135,7 @@ namespace AccessBridgeExplorer {
       this.githubUrlLinkLabel.Size = new System.Drawing.Size(526, 18);
       this.githubUrlLinkLabel.TabIndex = 2;
       this.githubUrlLinkLabel.TabStop = true;
-      this.githubUrlLinkLabel.Text = "https://github.com/google/access-bridge-explorer";
+      this.githubUrlLinkLabel.Text = "https://github.com/robomotionio/robomotion-java-inspector";
       this.githubUrlLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.githubUrlLinkLabel_LinkClicked);
       // 
       // disclaimerText
@@ -152,7 +152,7 @@ namespace AccessBridgeExplorer {
       this.disclaimerText.ReadOnly = true;
       this.disclaimerText.Size = new System.Drawing.Size(526, 13);
       this.disclaimerText.TabIndex = 5;
-      this.disclaimerText.Text = "DISCLAIMER: This is not an official Google product.";
+      this.disclaimerText.Text = "";
       // 
       // groupBox1
       // 
