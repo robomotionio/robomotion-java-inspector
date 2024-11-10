@@ -31,6 +31,7 @@ namespace AccessBridgeExplorer {
     private bool _capturing;
     private int _navigationVersion = int.MinValue;
     private bool _updateNotificationShown;
+    private readonly ContextMenuStrip _treeContextMenu;
 
     public ExplorerForm() {
       InitializeComponent();
@@ -53,10 +54,99 @@ namespace AccessBridgeExplorer {
       SetDoubleBuffered(_accessibleComponentTabControl, true);
       SetDoubleBuffered(_bottomTabControl, true);
 
+      // Initialize context menu
+
+      _treeContextMenu = new ContextMenuStrip();
+
+      var copyWindowTitleItem = new ToolStripMenuItem("Copy Window Title");
+      copyWindowTitleItem.Click += CopyWindowTitle_Click;
+      _treeContextMenu.Items.Add(copyWindowTitleItem);
+
+      var copyFullPathItem = new ToolStripMenuItem("Copy Full Path");
+      copyFullPathItem.Click += CopyXPath_Click;
+      _treeContextMenu.Items.Add(copyFullPathItem);
+
       //activateOverlayOnTreeSelectionButton_Click(activateOverlayOnTreeSelectionButton, EventArgs.Empty);
       //autoDetectApplicationsMenuItem_CheckChanged(autoDetectApplicationsMenuItem, EventArgs.Empty);
       //automaticallyCheckForUpdatesMenuItem_CheckedChanged(automaticallyCheckForUpdatesMenuItem, EventArgs.Empty);
     }
+
+    protected override void OnLoad(EventArgs e) {
+      base.OnLoad(e);
+      
+      // Add this line to wire up the context menu event
+      _accessibilityTree.MouseClick += AccessibilityTree_MouseClick;
+    }
+
+    private void AccessibilityTree_MouseClick(object sender, MouseEventArgs e) {
+      if (e.Button == MouseButtons.Right) {
+        // Get the node at the clicked position
+        TreeNode clickedNode = _accessibilityTree.GetNodeAt(e.X, e.Y);
+        if (clickedNode != null) {
+          // Select the node
+          _accessibilityTree.SelectedNode = clickedNode;
+          // Show context menu at mouse position
+          _treeContextMenu.Show(_accessibilityTree, e.Location);
+        }
+      }
+    }
+
+private void CopyXPath_Click(object sender, EventArgs e) {
+    TreeNode selectedNode = _accessibilityTree.SelectedNode;
+    if (selectedNode != null) {
+        var path = new List<string>();
+        TreeNode currentNode = selectedNode;
+        
+        while (currentNode != null && currentNode.Parent != null) {
+            string nodeText = currentNode.Text;
+            string role = nodeText;
+            
+            // Extract role (everything before the first colon or parenthesis)
+            int colonIndex = nodeText.IndexOf(": ");
+            int parenthesesStart = nodeText.IndexOf(" (");
+            
+            if (colonIndex > 0 && (parenthesesStart == -1 || colonIndex < parenthesesStart)) {
+                role = nodeText.Substring(0, colonIndex).Trim();
+            } else if (parenthesesStart > 0) {
+                role = nodeText.Substring(0, parenthesesStart).Trim();
+            }
+            
+            // Find index of this role among siblings
+            int index = GetIndexAmongSiblings(currentNode, role);
+            
+            // Add this segment to the start of the path
+            path.Insert(0, string.Format("{0}[{1}]", role, index));
+            currentNode = currentNode.Parent;
+        }
+
+        string fullPath = string.Join("/", path);
+        Clipboard.SetText(fullPath);
+        
+        notificationPanel.ShowNotification(new NotificationPanelEntry {
+            Text = string.Format("Path copied to clipboard: {0}", fullPath),
+            Icon = NotificationPanelIcon.Info,
+        });
+    }
+}
+
+private int GetIndexAmongSiblings(TreeNode node, string role) {
+    int index = 0;
+    foreach (TreeNode sibling in node.Parent.Nodes) {
+        string siblingRole = sibling.Text;
+        int parenthesesIndex = siblingRole.IndexOf(" (");
+        if (parenthesesIndex > 0) {
+            siblingRole = siblingRole.Substring(0, parenthesesIndex).Trim();
+        }
+        
+        if (siblingRole == role) {
+            if (sibling == node) {
+                return index;
+            }
+            index++;
+        }
+    }
+    return index;
+}
 
     private void MainForm_Shown(object sender, EventArgs e) {
       InvokeLater(() => {
@@ -380,6 +470,40 @@ namespace AccessBridgeExplorer {
         "Reset all options",
         MessageBoxButtons.OK,
         MessageBoxIcon.Information);
+    }
+
+    private void CopyWindowTitle_Click(object sender, EventArgs e) {
+        TreeNode selectedNode = _accessibilityTree.SelectedNode;
+        if (selectedNode != null) {
+            // Get the root node (window node)
+            TreeNode rootNode = selectedNode;
+            while (rootNode.Parent != null) {
+                rootNode = rootNode.Parent;
+            }
+            
+            string nodeText = rootNode.Text;
+            int colonIndex = nodeText.IndexOf(": ");
+            if (colonIndex > 0) {
+                // Extract text after "frame: " prefix
+                string title = nodeText.Substring(colonIndex + 2);
+                Clipboard.SetText(title);
+                
+                notificationPanel.ShowNotification(new NotificationPanelEntry {
+                    Text = "Window title copied to clipboard: " + title,
+                    Icon = NotificationPanelIcon.Info,
+                });
+            } else {
+                notificationPanel.ShowNotification(new NotificationPanelEntry {
+                    Text = "No window title found in root node text",
+                    Icon = NotificationPanelIcon.Warning,
+                });
+            }
+        } else {
+            notificationPanel.ShowNotification(new NotificationPanelEntry {
+                Text = "No node selected",
+                Icon = NotificationPanelIcon.Warning,
+            });
+        }
     }
 
     #region IExplorerFormView
