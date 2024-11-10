@@ -119,7 +119,7 @@ private void CopyXPath_Click(object sender, EventArgs e) {
             currentNode = currentNode.Parent;
         }
 
-        string fullPath = string.Join("/", path);
+        string fullPath = "/" + string.Join("/", path);
         Clipboard.SetText(fullPath);
         
         notificationPanel.ShowNotification(new NotificationPanelEntry {
@@ -485,7 +485,7 @@ private int GetIndexAmongSiblings(TreeNode node, string role) {
             int colonIndex = nodeText.IndexOf(": ");
             if (colonIndex > 0) {
                 // Extract text after "frame: " prefix
-                string title = nodeText.Substring(colonIndex + 2);
+                string title = nodeText.Substring(colonIndex + 2).Trim('"');
                 Clipboard.SetText(title);
                 
                 notificationPanel.ShowNotification(new NotificationPanelEntry {
