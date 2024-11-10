@@ -22,7 +22,7 @@ using WindowsAccessBridgeInterop;
 [assembly: AssemblyTitle("Robomotion Java Inspector")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Robomotion")]
 [assembly: AssemblyProduct("Robomotion Java Inspector")]
 [assembly: AssemblyCopyright("Copyright 2024 Robomotion. Copyright 2016 Google Inc. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
